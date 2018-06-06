@@ -9,7 +9,7 @@ export function activate(context: vscode.ExtensionContext) {
     // This line of code will only be executed once when your extension is activated
     console.log('Extension is active!');
 
-    
+
 
     const spiraProvider = new SpiraArtifactProvider(context);
     let refresh = vscode.commands.registerCommand('spira.refresh', () => {
@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(refresh);
     vscode.window.registerTreeDataProvider('spiraArtifacts', spiraProvider);
-    
+
 }
 
 // this method is called when your extension is deactivated

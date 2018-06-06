@@ -38,6 +38,26 @@
                     "name": "Spira Artifacts"
                 }
             ]
+        },
+        "configuration": {
+            "title": "Spira configuration",
+            "properties": {
+                "spira.credentials.url": {
+                    "type": "string",
+                    "default": "http://doctor/SpiraPlan",
+                    "description": "Base URL for accessing Spira ex. https://demo.spiraservice.net/examle"
+                },
+                "spira.credentials.username": {
+                    "type": "string",
+                    "default": "fredbloggs",
+                    "description": "Enter your Spira username"
+                },
+                "spira.credentials.rsstoken": {
+                    "type": "string",
+                    "default": "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}",
+                    "description": "Marked 'RSS Token' in your profile, RSS Feeds must be enabled for this to work"
+                }
+            }
         }
     },
     "scripts": {
@@ -53,5 +73,8 @@
         "tslint": "^5.8.0",
         "typescript": "^2.9.1",
         "vscode": "^1.1.6"
+    },
+    "dependencies": {
+        "request": "^2.87.0"
     }
 }
