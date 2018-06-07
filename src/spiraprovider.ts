@@ -59,21 +59,16 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
         //set to true when its respective request is completed
         let fulfilled = {
             requirements: false,
-            incidents: true,
-            tasks: true
+            incidents: false,
+            tasks: false
         };
         this.populateAssignedRequirements(fulfilled);
-        //TODO: Make not temporary
-        //this.requirements.push(new Artifact("Add Spira Integration", ArtifactType.Requirement,
-        //    -1, "LIS", 1, "des", "low", "In Progress", "Requirement"));
-        this.tasks.push(new Artifact("Have lunch", ArtifactType.Task,
-            -1, "LIS", 1, "des", "low", "In Progress", "Feature"));
-        this.incidents.push(new Artifact("So Broken...", ArtifactType.Incident,
-            -1, "LIS", 1, "des", "low", "In Progress", "Bug"));
+        this.populateAssignedIncidents(fulfilled);
+        this.populateAssignedTasks(fulfilled);
     }
 
     /**
-     * Populate all of the requirements assigned to the user
+     * Populate all of the requirements assigned to the user with data from the server
      */
     populateAssignedRequirements(fulfilled: any): void {
         this.requirements = [];
@@ -83,9 +78,10 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
         request(url, { json: true }, (error, response, body) => {
             //for each assigned requirement
             body.forEach(element => {
-                let name = element.Name, id = element.RequirementId, projectId = element.ProjectId, projectName = element.ProjectName;
-                let description = element.Description, priorityName = element.ImportanceName, status = element.StatusName, type = element.RequirementTypeName;
-                console.log(name);
+                //get the properties
+                let name = element.Name, id = element.RequirementId, projectId = element.ProjectId;
+                let projectName = element.ProjectName, description = element.Description, priorityName = element.ImportanceName;
+                let status = element.StatusName, type = element.RequirementTypeName;
 
                 //actually create the new requirement
                 let newRequirement: Artifact = new Artifact(name, ArtifactType.Requirement, projectId, projectName, id, description, priorityName, status, type);
@@ -102,17 +98,68 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
         });
     }
 
-    getAssignedIncidents(): Artifact[] {
-        let out: Artifact[] = [];
+    /**
+     * Populate all fo the incidents assigned to the user with data from the server
+     */
+    populateAssignedIncidents(fulfilled: any): void {
+        this.incidents = [];
+        //get the url the request will be sent to
+        let url: string = `${this.getUrl()}${this.restServiceUrl}incidents?username=${this.getUsername()}&api-key=${this.getToken()}`;
+        //perform the GET request
+        request(url, { json: true }, (error, response, body) => {
+            //for each assigned incident...
+            body.forEach(element => {
+                //get the properties
+                let name = element.Name, id = element.IncidentId, projectId = element.ProjectId;
+                let projectName = element.ProjectName, description = element.Description, priorityName = element.PriorityName;
+                let status = element.IncidentStatusName, type = element.IncidentTypeName;
 
-        return out;
+                //actually create the new incident
+                let newIncident: Artifact = new Artifact(name, ArtifactType.Incident, projectId, projectName, id, description, priorityName, status, type);
+                this.incidents.push(newIncident);
+            });
+            //set incidents as done
+            fulfilled.incidents = true;
+            //if all requests are done, move on
+            if (fulfilled.requirements && fulfilled.tasks && fulfilled.incidents) {
+                this.populateHeaders();
+                //update the onDidChangeTreeData event
+                this.eventEmitter.fire();
+            }
+        });
     }
 
-    getAssignedTasks(): Artifact[] {
-        let out: Artifact[] = [];
+    /**
+     * Populate all of the tasks assigned to the user with data from the server
+     */
+    populateAssignedTasks(fulfilled: any): void {
+        this.tasks = [];
+        //get the url the request will be sent to
+        let url: string = `${this.getUrl()}${this.restServiceUrl}tasks?username=${this.getUsername()}&api-key=${this.getToken()}`;
+        //perform the GET request
+        request(url, { json: true }, (error, response, body) => {
+            //for each assigned task
+            body.forEach(element => {
+                //get the properties
+                let name = element.Name, id = element.TaskId, projectId = element.projectId;
+                let projectName = element.ProjectName, description = element.Description, priorityName = element.TaskPriorityName;
+                let status = element.TaskStatusName, type = element.TaskTypeName;
 
-        return out;
+                //actually create the new task
+                let newTask: Artifact = new Artifact(name, ArtifactType.Task, projectId, projectName, id, description, priorityName, status, type);
+                this.tasks.push(newTask);
+            });
+            //set tasks as done
+            fulfilled.tasks = true;
+            //if all requests are done, move on
+            if (fulfilled.requirements && fulfilled.tasks && fulfilled.incidents) {
+                this.populateHeaders();
+                //update the onDidChangeTreeData event
+                this.eventEmitter.fire();
+            }
+        });
     }
+
 
     /**
      * Adds a header for the artifact type if there is at least one assigned
@@ -197,7 +244,19 @@ class Artifact extends vscode.TreeItem {
         }
         //if artifact is anything else
         else {
-            return `${this.projectName} | ${this.artifactType}:${this.artifactId}`;
+            return `${this.projectName} | ${this.getShorthandArtifact(this.artifactType)}:${this.artifactId}`;
+        }
+    }
+
+    /**
+     * Returns the shorthand of the artifact type, ex: IN for incident, TK for task, RQ for requirement
+     * @param type Type of artifact
+     */
+    getShorthandArtifact(type: ArtifactType): string {
+        switch (type) {
+            case ArtifactType.Requirement: return "RQ";
+            case ArtifactType.Incident: return "IN";
+            case ArtifactType.Task: return "TK";
         }
     }
 }
