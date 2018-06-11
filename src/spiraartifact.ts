@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as request from 'request';
+import { Artifact, ArtifactType } from './artifact';
 
 export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> {
     /**
@@ -175,6 +176,7 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
         if (this.incidents.length > 0) {
             this.headers.push(new Artifact("INCIDENTS", ArtifactType.Incident, 0, "", 0, "", "", "", "header"));
         }
+
     }
 
     getChildren(element: Artifact): Thenable<Artifact[]> {
@@ -214,55 +216,4 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
     getTreeItem(element: Artifact): vscode.TreeItem {
         return element;
     }
-}
-
-/**
- * An Artifact in Spira
- */
-class Artifact extends vscode.TreeItem {
-    /**
-     * @param name Name of the artifact
-     * @param artifactType Either RQ, IN, TK
-     * @param projectId Project ID
-     * @param projectName Name of the project
-     * @param artifactId ID of the artifact
-     * @param description Description of the artifact
-     * @param priorityName Priority of the artifact
-     * @param status Workflow status
-     * @param type Type ex. change request, bug, feature
-     */
-    constructor(public name: string, public artifactType: ArtifactType,
-        public projectId: number, public projectName: string, public artifactId: number, public description: string, public priorityName: string, public status: string, public type: string) {
-        //1 is a constant for collapsed - https://code.visualstudio.com/docs/extensionAPI/vscode-api#TreeItemCollapsibleState
-        super(name, type === "header" ? 1 : 0);
-    }
-
-    get tooltip(): string {
-        //Tooltip if this is a header
-        if (this.type === "header") {
-            return `Click to expand/collapse ${this.artifactType + 's'}`;
-        }
-        //if artifact is anything else
-        else {
-            return `${this.projectName} | ${this.getShorthandArtifact(this.artifactType)}:${this.artifactId}`;
-        }
-    }
-
-    /**
-     * Returns the shorthand of the artifact type, ex: IN for incident, TK for task, RQ for requirement
-     * @param type Type of artifact
-     */
-    getShorthandArtifact(type: ArtifactType): string {
-        switch (type) {
-            case ArtifactType.Requirement: return "RQ";
-            case ArtifactType.Incident: return "IN";
-            case ArtifactType.Task: return "TK";
-        }
-    }
-}
-
-enum ArtifactType {
-    Requirement = "Requirement",
-    Incident = "Incident",
-    Task = "Task",
 }

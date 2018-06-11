@@ -1,24 +1,24 @@
 'use strict';
 import * as vscode from 'vscode';
-import { SpiraArtifactProvider } from './spiraprovider';
+import { SpiraArtifactProvider } from './spiraartifact';
+import { SpiraInformationProvider } from './spirainformation';
+import { Artifact } from './artifact';
 
 //called when extension is activated. See package.json for activation events
 export function activate(context: vscode.ExtensionContext) {
-
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Extension is active!');
-
-
-
     const spiraProvider = new SpiraArtifactProvider(context);
+    const spiraInformation = new SpiraInformationProvider(context);
     let refresh = vscode.commands.registerCommand('spira.refresh', () => {
         //refresh the Spira window
         spiraProvider.refresh();
     });
+    let showInfo = vscode.commands.registerCommand('spira.info', (artifact: Artifact) => {
+        spiraInformation.setArtifact(artifact);
+    });
 
     context.subscriptions.push(refresh);
     vscode.window.registerTreeDataProvider('spiraArtifacts', spiraProvider);
+    vscode.window.registerTreeDataProvider('spiraInformation', spiraInformation);
 
 }
 

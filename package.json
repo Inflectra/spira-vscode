@@ -20,6 +20,10 @@
             {
                 "command": "spira.refresh",
                 "title": "Spira - Refresh"
+            },
+            {
+                "command": "spira.info",
+                "title": "Spira - Show Artifact Information"
             }
         ],
         "viewsContainers": {
@@ -36,6 +40,10 @@
                 {
                     "id": "spiraArtifacts",
                     "name": "Spira Artifacts"
+                },
+                {
+                    "id": "spiraInformation",
+                    "name": "Artifact Information"
                 }
             ]
         },
