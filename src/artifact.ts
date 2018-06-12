@@ -19,7 +19,7 @@ export class Artifact extends TreeItem {
         public projectId: number, public projectName: string, public artifactId: number, public description: string, public priorityName: string, public status: string, public type: string) {
         //1 is a constant for collapsed - https://code.visualstudio.com/docs/extensionAPI/vscode-api#TreeItemCollapsibleState
         super(name, type === "header" ? 1 : 0);
-        //this.command = new SpiraInfoCommand(this);
+        this.command = new SpiraInfoCommand(this);
     }
 
     get tooltip(): string {
@@ -49,7 +49,7 @@ export class Artifact extends TreeItem {
 export class SpiraInfoCommand implements Command {
     command: string = 'spira.info';
     title: string = 'Spira - Show Artifact Information';
-    arguments: Artifact[];
+    arguments: Artifact[] = [];
 
     constructor(artifact: Artifact) {
         this.arguments.push(artifact);

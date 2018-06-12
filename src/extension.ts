@@ -13,10 +13,13 @@ export function activate(context: vscode.ExtensionContext) {
         spiraProvider.refresh();
     });
     let showInfo = vscode.commands.registerCommand('spira.info', (artifact: Artifact) => {
-        spiraInformation.setArtifact(artifact);
+        //only look at the event if it is actually an artifact and not just a header
+        if (artifact.type !== "header") {
+            spiraInformation.setArtifact(artifact);
+        }
+
     });
 
-    context.subscriptions.push(refresh);
     vscode.window.registerTreeDataProvider('spiraArtifacts', spiraProvider);
     vscode.window.registerTreeDataProvider('spiraInformation', spiraInformation);
 
