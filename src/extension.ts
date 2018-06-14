@@ -3,11 +3,16 @@ import * as vscode from 'vscode';
 import { SpiraArtifactProvider } from './spiraartifact';
 import { SpiraInformationProvider } from './spirainformation';
 import { Artifact } from './artifact';
+import { SpiraHtmlProvider } from './htmlprovider';
+import { SpiraConstants } from './constants';
 
 //called when extension is activated. See package.json for activation events
 export function activate(context: vscode.ExtensionContext) {
     const spiraProvider = new SpiraArtifactProvider(context);
     const spiraInformation = new SpiraInformationProvider(context);
+    const spiraHtmlProvider = new SpiraHtmlProvider();
+    const uri: vscode.Uri = vscode.Uri.parse(SpiraConstants.URI);
+
     let refresh = vscode.commands.registerCommand('spira.refresh', () => {
         //refresh the Spira window
         spiraProvider.refresh();
@@ -15,11 +20,15 @@ export function activate(context: vscode.ExtensionContext) {
     let showInfo = vscode.commands.registerCommand('spira.info', (artifact: Artifact) => {
         //only look at the event if it is actually an artifact and not just a header
         if (artifact.type !== "header") {
-            spiraInformation.setArtifact(artifact);
+            //spiraInformation.setArtifact(artifact);
+            vscode.commands.executeCommand('vscode.previewHtml', uri);
+            spiraHtmlProvider.update(uri);
+            console.log('artifact clicked');
         }
 
     });
 
+    vscode.workspace.registerTextDocumentContentProvider('Spira', spiraHtmlProvider);
     vscode.window.registerTreeDataProvider('spiraArtifacts', spiraProvider);
     vscode.window.registerTreeDataProvider('spiraInformation', spiraInformation);
 
