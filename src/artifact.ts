@@ -58,6 +58,7 @@ export class SpiraInfoCommand implements Command {
 
 /**
  * Way of displaying information about an artifact
+ * @deprecated NOT USED ANYMORE
  */
 export class ArtifactInfo extends TreeItem {
     /**

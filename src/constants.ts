@@ -1,4 +1,4 @@
 
 export module SpiraConstants {
-    export const URI: string = "Spira://authority/spira";
+    export const URI: string = "Spira://authority/information";
 }

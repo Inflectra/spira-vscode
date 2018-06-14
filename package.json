@@ -40,10 +40,6 @@
                 {
                     "id": "spiraArtifacts",
                     "name": "Spira Artifacts"
-                },
-                {
-                    "id": "spiraInformation",
-                    "name": "Artifact Information"
                 }
             ]
         },

@@ -142,7 +142,7 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
             //for each assigned task
             body.forEach(element => {
                 //get the properties
-                let name = element.Name, id = element.TaskId, projectId = element.projectId;
+                let name = element.Name, id = element.TaskId, projectId = element.ProjectId;
                 let projectName = element.ProjectName, description = element.Description, priorityName = element.TaskPriorityName;
                 let status = element.TaskStatusName, type = element.TaskTypeName;
 

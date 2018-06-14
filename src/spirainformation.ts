@@ -3,6 +3,7 @@ import { ArtifactInfo, ArtifactType, Artifact } from './artifact';
 
 /**
  * View which shows information about the given artifact
+ * @deprecated NOT USED ANYMORE
  */
 export class SpiraInformationProvider implements vscode.TreeDataProvider<ArtifactInfo> {
     /**
