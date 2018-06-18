@@ -12,6 +12,7 @@
     ],
     "activationEvents": [
         "onCommand:spira.refresh",
+        "onCommand:spira.setupCredentials",
         "onView:spiraArtifacts"
     ],
     "main": "./out/extension",
@@ -36,6 +37,10 @@
             {
                 "command": "spira.info",
                 "title": "Spira - Show Artifact Information"
+            },
+            {
+                "command": "spira.setupCredentials",
+                "title": "Spira - Setup Credentials"
             }
         ],
         "viewsContainers": {
@@ -58,25 +63,25 @@
         "configuration": {
             "title": "Spira configuration",
             "properties": {
-                "spira.credentials.url": {
-                    "type": "string",
-                    "default": "http://doctor/SpiraPlan",
-                    "description": "Base URL for accessing Spira ex. https://demo.spiraservice.net/examle"
-                },
-                "spira.credentials.username": {
-                    "type": "string",
-                    "default": "fredbloggs",
-                    "description": "Enter your Spira username"
-                },
-                "spira.credentials.rsstoken": {
-                    "type": "string",
-                    "default": "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}",
-                    "description": "Marked 'RSS Token' in your profile, RSS Feeds must be enabled for this to work"
-                },
-                "spira.settings.refreshtime": {
+                "spira.settings.refreshTime": {
                     "type": "integer",
                     "default": 60,
                     "description": "Number of seconds between refreshing data from the server. Any value below 1 will never automatically refresh. Refreshing manually will restart timing"
+                },
+                "spira.settings.showIncidents": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show assigned incidents in the UI"
+                },
+                "spira.settings.showRequirements": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show assigned requirements in the UI"
+                },
+                "spira.settings.showTasks": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show assigned tasks in the UI"
                 }
             }
         }

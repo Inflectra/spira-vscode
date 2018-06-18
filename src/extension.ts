@@ -4,20 +4,32 @@ import { SpiraArtifactProvider } from './spiraartifactprovider';
 import { Artifact } from './artifact';
 import { SpiraHtmlProvider } from './htmlprovider';
 import { SpiraConstants } from './constants';
+import { SetupCredentialsCommand } from './setupcredentialscommand';
 
 /**
  * Timer used to refresh the settings
  */
 var timer: NodeJS.Timer;
 
+/**
+ * Becomes false when an error occurs
+ */
+var runTimer: { run: boolean } = {
+    run: true
+};
+
 //called when extension is activated. See package.json for activation events
 export function activate(context: vscode.ExtensionContext) {
-    const spiraProvider = new SpiraArtifactProvider(context);
-    const spiraHtmlProvider = new SpiraHtmlProvider();
+    const spiraProvider = new SpiraArtifactProvider(context, runTimer);
+    const spiraHtmlProvider = new SpiraHtmlProvider(context);
+    const setupCredentialsCommand = new SetupCredentialsCommand(context);
     const uri: vscode.Uri = vscode.Uri.parse(SpiraConstants.URI);
 
     let refresh = vscode.commands.registerCommand('spira.refresh', () => {
-        refreshCallback();
+        runTimer.run = true;
+        if (!timer) {
+            refreshCallback();
+        }
         //refresh the Spira window
         spiraProvider.refresh();
     });
@@ -29,7 +41,9 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.commands.executeCommand('vscode.previewHtml', uri);
             spiraHtmlProvider.update(uri);
         }
-
+    });
+    let setupCredentials = vscode.commands.registerCommand('spira.setupCredentials', () => {
+        setupCredentialsCommand.run();
     });
 
     vscode.workspace.registerTextDocumentContentProvider('Spira', spiraHtmlProvider);
@@ -40,7 +54,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 function refreshCallback(): void {
     clearTimeout(timer);
-    vscode.commands.executeCommand('spira.refresh');
+    if (!runTimer.run) {
+        return;
+    }
     let time = getRefreshTime();
     //only refresh if user input a value above 0
     if (time > 0) {
@@ -50,16 +66,14 @@ function refreshCallback(): void {
         }
         timer = setTimeout(refreshCallback, time);
     }
-    else {
-        timer = undefined;
-    }
+    vscode.commands.executeCommand('spira.refresh');
 }
 
 /**
  * Gets the time in miliseconds to refresh artifacts from Spira
  */
 function getRefreshTime(): number {
-    return vscode.workspace.getConfiguration().get<number>("spira.settings.refreshtime") * 1000;
+    return vscode.workspace.getConfiguration().get<number>("spira.settings.refreshTime") * 1000;
 }
 
 // this method is called when your extension is deactivated

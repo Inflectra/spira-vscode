@@ -5,7 +5,7 @@ export class SpiraHtmlProvider implements vscode.TextDocumentContentProvider {
     private _onDidChange: vscode.EventEmitter<vscode.Uri>;
     private artifact: Artifact;
 
-    constructor() {
+    constructor(public context: vscode.ExtensionContext) {
         this._onDidChange = new vscode.EventEmitter<vscode.Uri>();
     }
 
@@ -45,8 +45,7 @@ export class SpiraHtmlProvider implements vscode.TextDocumentContentProvider {
      * Returns the url of the artifact on the web
      */
     private getArtifactUrl(): string {
-        let url = `${vscode.workspace.getConfiguration().get<string>("spira.credentials.url")}/`;
-        url += `${this.artifact.projectId}/${this.artifact.artifactType}/${this.artifact.artifactId}.aspx`;
+        let url = `${this.context.globalState.get("spira-url")}/${this.artifact.projectId}/${this.artifact.artifactType}/${this.artifact.artifactId}.aspx`;
         return url;
     }
 

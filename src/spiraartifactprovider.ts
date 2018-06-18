@@ -26,8 +26,16 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
      * Fake 'header' artifacts where artifacts of the same type are displayed under
      */
     headers: Artifact[] = [];
+    /**
+     * Has which requests have failed
+     */
+    failed = {
+        requirements: false,
+        incidents: false,
+        tasks: false
+    };
 
-    constructor(context: vscode.ExtensionContext) {
+    constructor(public context: vscode.ExtensionContext, public runTimer: { run: boolean }) {
         this.populateArtifacts();
     }
 
@@ -35,21 +43,34 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
      * Get the URL entered by the user
      */
     getUrl(): string {
-        return vscode.workspace.getConfiguration().get<string>("spira.credentials.url");
+        return this.context.globalState.get("spira-url");
     }
 
     /**
      * Get the username entered by the user
      */
     getUsername(): string {
-        return vscode.workspace.getConfiguration().get<string>("spira.credentials.username");
+        return this.context.globalState.get("spira-username");
     }
 
     /**
      * Get the RSS Token (api-key) entered by the user
      */
     getToken(): string {
-        return vscode.workspace.getConfiguration().get<string>("spira.credentials.rsstoken");
+        return this.context.globalState.get("spira-token");
+    }
+
+    //returns true if showing artifact, false otherwise from settings
+    showIncidents(): boolean {
+        return vscode.workspace.getConfiguration().get<boolean>("spira.settings.showIncidents");
+    }
+
+    showRequirements(): boolean {
+        return vscode.workspace.getConfiguration().get<boolean>("spira.settings.showRequirements");
+    }
+
+    showTasks(): boolean {
+        return vscode.workspace.getConfiguration().get<boolean>("spira.settings.showTasks");
     }
 
     /**
@@ -69,14 +90,44 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
     }
 
     /**
+     * Called when any of the artifact calls fails
+     */
+    error(): void {
+        this.tasks = [];
+        this.requirements = [];
+        this.incidents = [];
+        this.headers = [];
+
+        this.eventEmitter.fire();
+        //if all three have failed
+        if (this.failed.requirements && this.failed.tasks && this.failed.incidents) {
+            vscode.window.showErrorMessage("Please verify your credentials and try again. Check them by running 'spira.setupCredentials' in the command palette");
+            this.failed.requirements = false;
+            this.failed.tasks = false;
+            this.failed.incidents = false;
+            this.runTimer.run = false;
+        }
+    }
+
+    /**
      * Populate all of the requirements assigned to the user with data from the server
      */
     populateAssignedRequirements(fulfilled: any): void {
         this.requirements = [];
+        //stop if we don't check for requirements
+        if (!this.showRequirements()) {
+            return;
+        }
         //get the url the request will be sent to
         let url: string = `${this.getUrl()}${this.restServiceUrl}requirements?username=${this.getUsername()}&api-key=${this.getToken()}`;
         //perform the GET request
         request(url, { json: true }, (error, response, body) => {
+            //if we got an error
+            if (!body || response.statusCode >= 400) {
+                this.failed.requirements = true;
+                this.error();
+                return;
+            }
             //for each assigned requirement
             body.forEach(element => {
                 //get the properties
@@ -104,10 +155,20 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
      */
     populateAssignedIncidents(fulfilled: any): void {
         this.incidents = [];
+        //stop if we don't check for incidents
+        if (!this.showIncidents()) {
+            return;
+        }
         //get the url the request will be sent to
         let url: string = `${this.getUrl()}${this.restServiceUrl}incidents?username=${this.getUsername()}&api-key=${this.getToken()}`;
         //perform the GET request
         request(url, { json: true }, (error, response, body) => {
+            //if we got an error
+            if (!body || response.statusCode >= 400) {
+                this.failed.incidents = true;
+                this.error();
+                return;
+            }
             //for each assigned incident...
             body.forEach(element => {
                 //get the properties
@@ -135,10 +196,20 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
      */
     populateAssignedTasks(fulfilled: any): void {
         this.tasks = [];
+        //stop if we don't check for tasks
+        if (!this.showTasks()) {
+            return;
+        }
         //get the url the request will be sent to
         let url: string = `${this.getUrl()}${this.restServiceUrl}tasks?username=${this.getUsername()}&api-key=${this.getToken()}`;
         //perform the GET request
         request(url, { json: true }, (error, response, body) => {
+            //if we got an error
+            if (!body || response.statusCode >= 400) {
+                this.failed.tasks = true;
+                this.error();
+                return;
+            }
             //for each assigned task
             body.forEach(element => {
                 //get the properties

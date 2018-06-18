@@ -67,20 +67,6 @@ export class SpiraInfoCommand implements Command {
     }
 }
 
-/**
- * Way of displaying information about an artifact
- * @deprecated NOT USED ANYMORE
- */
-export class ArtifactInfo extends TreeItem {
-    /**
-     * 
-     * @param label The text to show
-     */
-    constructor(public label: string) {
-        super(label);
-    }
-}
-
 export enum ArtifactType {
     Requirement = "Requirement",
     Incident = "Incident",
