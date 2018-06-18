@@ -1,4 +1,4 @@
-import { TreeItem, Command } from 'vscode';
+import { TreeItem, Command, Uri } from 'vscode';
 
 /**
  * An Artifact in Spira
@@ -20,6 +20,17 @@ export class Artifact extends TreeItem {
         //1 is a constant for collapsed - https://code.visualstudio.com/docs/extensionAPI/vscode-api#TreeItemCollapsibleState
         super(name, type === "header" ? 1 : 0);
         this.command = new SpiraInfoCommand(this);
+        if (type !== "header") {
+            if (artifactType === ArtifactType.Requirement) {
+                this.iconPath = Uri.parse("https://www.inflectra.com/Images/icons/icon-spiratest.svg");
+            }
+            else if (artifactType === ArtifactType.Incident) {
+                this.iconPath = Uri.parse("https://www.inflectra.com/Images/icons/icon-spirateam.svg");
+            }
+            else {
+                this.iconPath = Uri.parse("https://www.inflectra.com/Images/icons/icon-spiraplan.svg");
+            }
+        }
     }
 
     get tooltip(): string {

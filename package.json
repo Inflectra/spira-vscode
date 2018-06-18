@@ -16,6 +16,18 @@
     ],
     "main": "./out/extension",
     "contributes": {
+        "keybindings": [
+            {
+                "command": "spira.refresh",
+                "key": "alt+s alt+r",
+                "mac": "ctrl+s ctrl+r"
+            },
+            {
+                "command": "workbench.view.extension.spira-viewer",
+                "key": "alt+s",
+                "mac": "ctrl+s"
+            }
+        ],
         "commands": [
             {
                 "command": "spira.refresh",
@@ -60,6 +72,11 @@
                     "type": "string",
                     "default": "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}",
                     "description": "Marked 'RSS Token' in your profile, RSS Feeds must be enabled for this to work"
+                },
+                "spira.settings.refreshtime": {
+                    "type": "integer",
+                    "default": 60,
+                    "description": "Number of seconds between refreshing data from the server. Any value below 1 will never automatically refresh. Refreshing manually will restart timing"
                 }
             }
         }

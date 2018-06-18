@@ -19,7 +19,7 @@ export class SpiraHtmlProvider implements vscode.TextDocumentContentProvider {
      * Actually generate the html about the given artifact
      */
     private generateHtml(): string {
-        let out: string = `<html><style>th {padding-right: 20px; text-align: left;}</style><body><h1><a href="${this.getArtifactUrl()}">
+        let out: string = `<html><style>th, td {padding-right: 20px; text-align: left; vertical-align: text-top;}</style><body><h1><a href="${this.getArtifactUrl()}">
         ${this.getShorthandArtifact(this.artifact.artifactType)}:${this.artifact.artifactId} - ${this.artifact.name}</h1></a><table>`;
         //only show information if it exists
         if (this.artifact.type) {
