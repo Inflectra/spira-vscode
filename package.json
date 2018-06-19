@@ -13,7 +13,8 @@
     "activationEvents": [
         "onCommand:spira.refresh",
         "onCommand:spira.setupCredentials",
-        "onView:spiraArtifacts"
+        "onView:spiraArtifacts",
+        "onCommand:spira.newTask"
     ],
     "main": "./out/extension",
     "contributes": {
@@ -27,6 +28,11 @@
                 "command": "workbench.view.extension.spira-viewer",
                 "key": "alt+s",
                 "mac": "ctrl+s"
+            },
+            {
+                "command": "spira.newTask",
+                "key": "alt+s alt+t",
+                "mac": "ctrl+s ctrl+t"
             }
         ],
         "commands": [
@@ -41,6 +47,10 @@
             {
                 "command": "spira.setupCredentials",
                 "title": "Spira - Setup Credentials"
+            },
+            {
+                "command": "spira.newTask",
+                "title": "Spira - Create New Task"
             }
         ],
         "viewsContainers": {
@@ -84,6 +94,13 @@
                     "description": "Show assigned tasks in the UI"
                 }
             }
+        },
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "spira.newTask"
+                }
+            ]
         }
     },
     "scripts": {

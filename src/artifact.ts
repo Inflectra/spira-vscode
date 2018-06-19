@@ -57,6 +57,23 @@ export class Artifact extends TreeItem {
     }
 }
 
+/**
+ * Project in Spira with a name and ID
+ */
+export class Project {
+    constructor(public name: string, public id: number) {
+
+    }
+
+    getProjectName(): string {
+        return this.name;
+    }
+
+    getProjectId(): number {
+        return this.id;
+    }
+}
+
 export class SpiraInfoCommand implements Command {
     command: string = 'spira.info';
     title: string = 'Spira - Show Artifact Information';

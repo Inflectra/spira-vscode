@@ -1,13 +1,9 @@
 import * as vscode from 'vscode';
 import * as request from 'request';
-import { Artifact, ArtifactType } from './artifact';
+import { Artifact, ArtifactType, Project } from './artifact';
+import { SpiraConstants } from './constants';
 
 export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> {
-    /**
-     * The URL used to access REST services
-     */
-    restServiceUrl: string = "/services/v5_0/RestService.svc/";
-
     /**
      * Manages the refresh event so we can update when neccessary
      */
@@ -35,8 +31,23 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
         tasks: false
     };
 
+    /**
+     * Projects accessible to the user
+     */
+    projects: Project[] = [];
+
+    /**
+     * User ID of the authenticated user
+     */
+    userId: number = -1;
+
     constructor(public context: vscode.ExtensionContext, public runTimer: { run: boolean }) {
+        vscode.window.showInformationMessage("Retrieving data from Spira...");
         this.populateArtifacts();
+        this.populateProjects().then(e => {
+            this.projects = e;
+        });
+        this.populateUserId();
     }
 
     /**
@@ -90,6 +101,50 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
     }
 
     /**
+     * Populates all of the user available projects into the projects array
+     */
+    populateProjects(): Thenable<Project[]> {
+        let projects: Project[] = [];
+        let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}projects?username=${this.getUsername()}&api-key=${this.getToken()}`;
+        //perform the GET request
+        return new Promise<Project[]>(resolve => {
+            request(url, { json: true }, (error, response, body) => {
+                //if bad things happened...
+                if (!body || response.statusCode >= 400) {
+                    return;
+                }
+                //for each project
+                body.forEach(e => {
+                    let name: string = e.Name, id: number = e.ProjectId;
+                    projects.push(new Project(name, id));
+                });
+                resolve(projects);
+            });
+        });
+
+
+    }
+
+    /**
+     * Populate the user ID of the user
+     */
+    populateUserId(): Thenable<number> {
+        let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}users?username=${this.getUsername()}&api-key=${this.getToken()}`;
+        return new Promise<number>(resolve => {
+            //perform the GET request
+            request(url, { json: true }, (error, response, body) => {
+                //if bad things happened...
+                if (!body || response.statusCode >= 400) {
+                    return;
+                }
+                this.userId = body.UserId;
+                resolve(this.userId);
+            });
+        });
+
+    }
+
+    /**
      * Called when any of the artifact calls fails
      */
     error(): void {
@@ -113,15 +168,16 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
      * Populate all of the requirements assigned to the user with data from the server
      */
     populateAssignedRequirements(fulfilled: any): void {
-        this.requirements = [];
         //stop if we don't check for requirements
         if (!this.showRequirements()) {
+            this.requirements = [];
             return;
         }
         //get the url the request will be sent to
-        let url: string = `${this.getUrl()}${this.restServiceUrl}requirements?username=${this.getUsername()}&api-key=${this.getToken()}`;
+        let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}requirements?username=${this.getUsername()}&api-key=${this.getToken()}`;
         //perform the GET request
         request(url, { json: true }, (error, response, body) => {
+            this.requirements = [];
             //if we got an error
             if (!body || response.statusCode >= 400) {
                 this.failed.requirements = true;
@@ -154,15 +210,16 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
      * Populate all fo the incidents assigned to the user with data from the server
      */
     populateAssignedIncidents(fulfilled: any): void {
-        this.incidents = [];
         //stop if we don't check for incidents
         if (!this.showIncidents()) {
+            this.incidents = [];
             return;
         }
         //get the url the request will be sent to
-        let url: string = `${this.getUrl()}${this.restServiceUrl}incidents?username=${this.getUsername()}&api-key=${this.getToken()}`;
+        let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}incidents?username=${this.getUsername()}&api-key=${this.getToken()}`;
         //perform the GET request
         request(url, { json: true }, (error, response, body) => {
+            this.incidents = [];
             //if we got an error
             if (!body || response.statusCode >= 400) {
                 this.failed.incidents = true;
@@ -195,15 +252,16 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
      * Populate all of the tasks assigned to the user with data from the server
      */
     populateAssignedTasks(fulfilled: any): void {
-        this.tasks = [];
         //stop if we don't check for tasks
         if (!this.showTasks()) {
+            this.tasks = [];
             return;
         }
         //get the url the request will be sent to
-        let url: string = `${this.getUrl()}${this.restServiceUrl}tasks?username=${this.getUsername()}&api-key=${this.getToken()}`;
+        let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}tasks?username=${this.getUsername()}&api-key=${this.getToken()}`;
         //perform the GET request
         request(url, { json: true }, (error, response, body) => {
+            this.tasks = [];
             //if we got an error
             if (!body || response.statusCode >= 400) {
                 this.failed.tasks = true;

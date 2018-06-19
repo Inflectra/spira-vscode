@@ -5,6 +5,7 @@ import { Artifact } from './artifact';
 import { SpiraHtmlProvider } from './htmlprovider';
 import { SpiraConstants } from './constants';
 import { SetupCredentialsCommand } from './setupcredentialscommand';
+import { NewTaskCommand } from './newtaskcommand';
 
 /**
  * Timer used to refresh the settings
@@ -24,6 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
     const spiraHtmlProvider = new SpiraHtmlProvider(context);
     const setupCredentialsCommand = new SetupCredentialsCommand(context);
     const uri: vscode.Uri = vscode.Uri.parse(SpiraConstants.URI);
+    const newTaskCommand = new NewTaskCommand(context, spiraProvider);
 
     let refresh = vscode.commands.registerCommand('spira.refresh', () => {
         runTimer.run = true;
@@ -38,12 +40,24 @@ export function activate(context: vscode.ExtensionContext) {
         if (artifact.type !== "header") {
             //tailor the document around the clicked artifact
             spiraHtmlProvider.setArtifact(artifact);
-            vscode.commands.executeCommand('vscode.previewHtml', uri);
+            //actually open the document in the second column
+            vscode.commands.executeCommand('vscode.previewHtml', uri, vscode.ViewColumn.Two, `Spira - ${artifact.name}`).then(s => { });
             spiraHtmlProvider.update(uri);
         }
     });
     let setupCredentials = vscode.commands.registerCommand('spira.setupCredentials', () => {
         setupCredentialsCommand.run();
+    });
+    let newTask = vscode.commands.registerCommand('spira.newTask', () => {
+        //get the selected text
+        let editor = vscode.window.activeTextEditor;
+        let text = '';
+        if (editor) {
+            let selection: vscode.Selection = editor.selection;
+            text = editor.document.getText(selection);
+        }
+        //run with the selected text
+        newTaskCommand.run(text);
     });
 
     vscode.workspace.registerTextDocumentContentProvider('Spira', spiraHtmlProvider);
