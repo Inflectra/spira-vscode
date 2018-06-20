@@ -54,7 +54,7 @@ Clicking on the name of the artifact highlighted in blue will conveniently open 
 
 ## Refreshing your Assigned Items from Spira
 ### Refreshing Automatically
-By default, your assigned items are refreshed every 60 seconds. If you would like to change this, see [Changing Auto-Refresh Time](#Changing-Auto-Refresh-Time)
+By default, your assigned items are refreshed every 60 seconds. If you would like to change this, see [Changing Auto-Refresh Time](#changing-auto-refresh-time)
 
 Changing the setting will affect how often the server is pinged to refresh the list. If you put in 0 or below, the list will never automatically refresh, and a value between 1 and 5 will default to 5 seconds. If you changed the setting from 0 or below to above 0, please refresh manually as shown below:
 ### Refreshing Manually
