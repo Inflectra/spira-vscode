@@ -27,13 +27,13 @@ export function activate(context: vscode.ExtensionContext) {
     const uri: vscode.Uri = vscode.Uri.parse(SpiraConstants.URI);
     const newTaskCommand = new NewTaskCommand(context, spiraProvider);
 
-    let refresh = vscode.commands.registerCommand('spira.refresh', () => {
+    let refresh = vscode.commands.registerCommand('spira.refresh', (automatic: boolean) => {
         runTimer.run = true;
         if (!timer) {
             refreshCallback();
         }
         //refresh the Spira window
-        spiraProvider.refresh();
+        spiraProvider.refresh(!automatic);
     });
     let showInfo = vscode.commands.registerCommand('spira.info', (artifact: Artifact) => {
         //only look at the event if it is actually an artifact and not just a header
@@ -80,7 +80,7 @@ function refreshCallback(): void {
         }
         timer = setTimeout(refreshCallback, time);
     }
-    vscode.commands.executeCommand('spira.refresh');
+    vscode.commands.executeCommand('spira.refresh', true);
 }
 
 /**

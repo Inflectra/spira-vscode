@@ -1,13 +1,19 @@
-# Spira Artifact Viewer for VS Code
+# Spira Extension for VS Code
+
+## Brief Overview
+This plugin creates a new custom view which allows you to seamlessly view your assigned Spira Tasks, Requirements, and Incidents as well as create brand new Tasks right from Visual Studio Code.
+
+### Don't have Spira?
+If you do not have a Spira subscription, fear not! You can get a 30 day free trial for our flagship ALM product [SpiraPlan](http://www.inflectra.com/SpiraPlan/) with no credit card needed!
+
+### Guide Basics
+Unfortunately, this plugin only works with version 5.3 and above of the Spira ALM suite. If you have an older version, you need to update to use this plugin.
+
+This guide assumes you are familiar with Visual Studio Code and have already installed our plugin from the store. 
 
 ## Contributing
 If you want to contribute, take a look at `DEVNOTEs.md` in the root directory for information on how the plugin is structured. 
 
-This plugin creates a new custom view which allows you to seamlessly view your assigned Tasks, Requirements, and Incidents right from Visual Studio Code. 
-
-Unfortunately, this plugin only works with version 5.3 and above of the Spira ALM suite. If you have an older version, you need to update to use this plugin.
-
-This guide assumes you are familiar with Visual Studio Code and have already installed our plugin from the store. 
 ## Logging in
 Open the command palette and type in 'credentials' as shown: 
 
@@ -48,16 +54,14 @@ Clicking on the name of the artifact highlighted in blue will conveniently open 
 
 ## Refreshing your Assigned Items from Spira
 ### Refreshing Automatically
-By default, the panel will refresh every 60 seconds, but this can easily be changed or disabled altogether through settings. To change this, open up your settings and search for 'spira' as shown below:
-
-![Spira Refresh Setting](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Refresh%20Setting.PNG)
+By default, your assigned items are refreshed every 60 seconds. If you would like to change this, see [Changing Auto-Refresh Time](#Changing-Auto-Refresh-Time)
 
 Changing the setting will affect how often the server is pinged to refresh the list. If you put in 0 or below, the list will never automatically refresh, and a value between 1 and 5 will default to 5 seconds. If you changed the setting from 0 or below to above 0, please refresh manually as shown below:
 ### Refreshing Manually
-Running 'Spira - Refresh' in the command palette or hitting `alt+s+r` by default on windows will refresh manually.
+Running 'Spira - Refresh' in the command palette or hitting `alt+s, alt+r` by default on windows will refresh manually.
 
 ## Creating a new Task
-You can easily create a new task in VS Code by running 'Spira - Create New Task' in the command palette or by hitting `alt+s+t` on windows. This will take any highlighted text and dump it into the name prompt. Feel free to change the name if you like.
+You can easily create a new task in VS Code by running 'Spira - Create New Task' in the command palette or by hitting `alt+s, alt+t` on windows. This will take any highlighted text and dump it into the name prompt. Feel free to change the name if you like.
 
 ![Task Name](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Task%20Name.PNG)
 
@@ -67,7 +71,13 @@ Hit return and select a project from the dropdown as shown below:
 
 Hit return and you should see it in the Spira panel on the left and get a popup in the bottom right telling you it was a success!
 
-## Prevent Displaying an Item Type
+## Settings
+### Changing Auto-Refresh Time
+By default, the panel will refresh every 60 seconds, but this can easily be changed or disabled altogether through settings. To change this, open up your settings and search for 'spira' as shown below:
+
+![Spira Refresh Setting](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Refresh%20Setting.PNG)
+
+### Disabling an Item Type
 If you like, you can prevent displaying a particular item type. This can be particularly useful if you only want to view your assigned tasks, which should also decrease load times. To accomplish this, simply search 'spira' in settings and switch any of the 'showType' settings to false. See the image below for an example:
 
 ![Disable Artifacts](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Disable%20Artifact%20Type.PNG)

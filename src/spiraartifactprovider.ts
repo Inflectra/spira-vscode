@@ -41,6 +41,11 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
      */
     userId: number = -1;
 
+    /**
+     * Used to show the 'successfully retrieved data' dialog the first time Spira is opened
+     */
+    firstTime: boolean = true;
+
     constructor(public context: vscode.ExtensionContext, public runTimer: { run: boolean }) {
         this.populateArtifacts();
         this.populateProjects().then(e => {
@@ -334,7 +339,10 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
             this.headers.push(new Artifact(`INCIDENTS (${this.incidents.length})`, ArtifactType.Incident, 0, "", 0, "", "", "", "header", this.incidents.length === 0 ? 0 : 1));
         }
 
-        vscode.window.showInformationMessage("Successfully Retrieved Data from Spira");
+        if (this.firstTime) {
+            vscode.window.showInformationMessage("Successfully Retrieved Data from Spira");
+            this.firstTime = false;
+        }
 
     }
 
@@ -359,8 +367,14 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
         });
     }
 
-    refresh() {
+    /**
+     * Refreshes data from Spira
+     * @param manual true if done manually, false if automatic
+     */
+    refresh(manual: boolean) {
         this.populateArtifacts();
+        //show dialog when refreshed manually
+        this.firstTime = manual;
     }
 
     /**

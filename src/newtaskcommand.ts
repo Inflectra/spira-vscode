@@ -53,7 +53,7 @@ export class NewTaskCommand implements Command {
         request.post(requestUrl, { method: "POST", json: true, body: body, headers: { "Content-Type": "application/json", accept: "application/json" } }, (error, response, body) => {
             if (body.Name === taskName && taskName) {
                 window.showInformationMessage("New task posted successfully!");
-                this.spiraProvider.refresh();
+                this.spiraProvider.refresh(false);
             }
             else {
                 window.showErrorMessage("New Task failed to beam up :(");
