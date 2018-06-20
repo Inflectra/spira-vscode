@@ -1,7 +1,5 @@
 # Change Log
-All notable changes to the "spira-artifact-viewer" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-- Initial release
+1.0 - Initial Release
+* Can see assigned Incidents, Requirements, and Tasks
+* Can auto-refresh assigned artifacts from Spira
+* Can quick create a new task

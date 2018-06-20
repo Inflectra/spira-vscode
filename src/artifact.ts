@@ -14,11 +14,12 @@ export class Artifact extends TreeItem {
      * @param priorityName Priority of the artifact
      * @param status Workflow status
      * @param type Type ex. change request, bug, feature
+     * @param collapseState If the item is not expandable, 0, 1 otherwise
      */
     constructor(public name: string, public artifactType: ArtifactType,
-        public projectId: number, public projectName: string, public artifactId: number, public description: string, public priorityName: string, public status: string, public type: string) {
+        public projectId: number, public projectName: string, public artifactId: number, public description: string, public priorityName: string, public status: string, public type: string, collapseState: number) {
         //1 is a constant for collapsed - https://code.visualstudio.com/docs/extensionAPI/vscode-api#TreeItemCollapsibleState
-        super(name, type === "header" ? 1 : 0);
+        super(name, collapseState);
         this.command = new SpiraInfoCommand(this);
         if (type !== "header") {
             if (artifactType === ArtifactType.Requirement) {

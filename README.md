@@ -1,5 +1,8 @@
 # Spira Artifact Viewer for VS Code
 
+## Contributing
+If you want to contribute, take a look at `DEVNOTEs.md` in the root directory for information on how the plugin is structured. 
+
 This plugin creates a new custom view which allows you to seamlessly view your assigned Tasks, Requirements, and Incidents right from Visual Studio Code. 
 
 Unfortunately, this plugin only works with version 5.3 and above of the Spira ALM suite. If you have an older version, you need to update to use this plugin.

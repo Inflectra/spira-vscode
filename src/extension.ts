@@ -61,7 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     vscode.workspace.registerTextDocumentContentProvider('Spira', spiraHtmlProvider);
-    vscode.window.registerTreeDataProvider('spiraArtifacts', spiraProvider);
+    vscode.window.registerTreeDataProvider('spiraExtension', spiraProvider);
     //begin automatically refreshing
     setTimeout(refreshCallback, 5000);
 }

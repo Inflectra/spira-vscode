@@ -1,11 +1,16 @@
 {
     "name": "spira-artifact-viewer",
     "displayName": "Spira Artifact Viewer",
-    "description": "Allows users to see their assigned artifacts within VS Code",
+    "description": "Allows users to see their assigned artifacts within VS Code and quick create new tasks",
     "version": "0.0.1",
     "publisher": "Inflectra",
+    "icon": "media/spiraplan-icon-128x128.png",
     "engines": {
         "vscode": "^1.23.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Inflectra/spira-vscode.git"
     },
     "categories": [
         "Other"
@@ -13,7 +18,7 @@
     "activationEvents": [
         "onCommand:spira.refresh",
         "onCommand:spira.setupCredentials",
-        "onView:spiraArtifacts",
+        "onView:spiraExtension",
         "onCommand:spira.newTask"
     ],
     "main": "./out/extension",
@@ -41,10 +46,6 @@
                 "title": "Spira - Refresh"
             },
             {
-                "command": "spira.info",
-                "title": "Spira - Show Artifact Information"
-            },
-            {
                 "command": "spira.setupCredentials",
                 "title": "Spira - Setup Credentials"
             },
@@ -56,17 +57,17 @@
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "spira-viewer",
-                    "title": "Spira",
+                    "id": "spira-extension",
+                    "title": "SpiraPlan",
                     "icon": "media/spiraplan-monochrome.svg"
                 }
             ]
         },
         "views": {
-            "spira-viewer": [
+            "spira-extension": [
                 {
-                    "id": "spiraArtifacts",
-                    "name": "Spira Artifacts"
+                    "id": "spiraExtension",
+                    "name": "My Assigned"
                 }
             ]
         },

@@ -42,7 +42,6 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
     userId: number = -1;
 
     constructor(public context: vscode.ExtensionContext, public runTimer: { run: boolean }) {
-        vscode.window.showInformationMessage("Retrieving data from Spira...");
         this.populateArtifacts();
         this.populateProjects().then(e => {
             this.projects = e;
@@ -190,7 +189,7 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
                     let status = element.StatusName, type = element.RequirementTypeName;
 
                     //actually create the new requirement
-                    let newRequirement: Artifact = new Artifact(name, ArtifactType.Requirement, projectId, projectName, id, description, priorityName, status, type);
+                    let newRequirement: Artifact = new Artifact(name, ArtifactType.Requirement, projectId, projectName, id, description, priorityName, status, type, 0);
                     this.requirements.push(newRequirement);
                 });
                 //set requirements as done
@@ -242,7 +241,7 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
                     let status = element.IncidentStatusName, type = element.IncidentTypeName;
 
                     //actually create the new incident
-                    let newIncident: Artifact = new Artifact(name, ArtifactType.Incident, projectId, projectName, id, description, priorityName, status, type);
+                    let newIncident: Artifact = new Artifact(name, ArtifactType.Incident, projectId, projectName, id, description, priorityName, status, type, 0);
                     this.incidents.push(newIncident);
                 });
                 //set incidents as done
@@ -293,7 +292,7 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
                     let status = element.TaskStatusName, type = element.TaskTypeName;
 
                     //actually create the new task
-                    let newTask: Artifact = new Artifact(name, ArtifactType.Task, projectId, projectName, id, description, priorityName, status, type);
+                    let newTask: Artifact = new Artifact(name, ArtifactType.Task, projectId, projectName, id, description, priorityName, status, type, 0);
                     this.tasks.push(newTask);
                 });
                 //set tasks as done
@@ -325,18 +324,25 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
      */
     populateHeaders() {
         this.headers = [];
-        if (this.requirements.length > 0) {
-            this.headers.push(new Artifact("REQUIREMENTS", ArtifactType.Requirement, 0, "", 0, "", "", "", "header"));
+        if (this.showRequirements()) {
+            this.headers.push(new Artifact(`REQUIREMENTS (${this.requirements.length})`, ArtifactType.Requirement, 0, "", 0, "", "", "", "header", this.requirements.length === 0 ? 0 : 1));
         }
-        if (this.tasks.length > 0) {
-            this.headers.push(new Artifact("TASKS", ArtifactType.Task, 0, "", 0, "", "", "", "header"));
+        if (this.showTasks()) {
+            this.headers.push(new Artifact(`TASKS (${this.tasks.length})`, ArtifactType.Task, 0, "", 0, "", "", "", "header", this.tasks.length === 0 ? 0 : 1));
         }
-        if (this.incidents.length > 0) {
-            this.headers.push(new Artifact("INCIDENTS", ArtifactType.Incident, 0, "", 0, "", "", "", "header"));
+        if (this.showIncidents()) {
+            this.headers.push(new Artifact(`INCIDENTS (${this.incidents.length})`, ArtifactType.Incident, 0, "", 0, "", "", "", "header", this.incidents.length === 0 ? 0 : 1));
         }
+
+        vscode.window.showInformationMessage("Successfully Retrieved Data from Spira");
 
     }
 
+    /**
+     * VS Code API method implemented from TreeDataProvider that returns the parent-child relationship between artifacts. 
+     * VS Code passes in 
+     * @param element 
+     */
     getChildren(element: Artifact): Thenable<Artifact[]> {
         return new Promise(resolve => {
             //if it is the root
