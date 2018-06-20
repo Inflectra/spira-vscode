@@ -1,8 +1,8 @@
 {
-    "name": "spira-artifact-viewer",
-    "displayName": "Spira Artifact Viewer",
+    "name": "spira-extension-vscode",
+    "displayName": "Spira Extension for VS Code",
     "description": "Allows users to see their assigned artifacts within VS Code and quick create new tasks",
-    "version": "0.0.1",
+    "version": "1.0",
     "publisher": "Inflectra",
     "icon": "media/spiraplan-icon-128x128.png",
     "engines": {
