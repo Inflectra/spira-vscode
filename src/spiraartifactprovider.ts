@@ -168,33 +168,43 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
      * Populate all of the requirements assigned to the user with data from the server
      */
     populateAssignedRequirements(fulfilled: any): void {
-        //stop if we don't check for requirements
-        if (!this.showRequirements()) {
-            this.requirements = [];
-            return;
-        }
-        //get the url the request will be sent to
-        let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}requirements?username=${this.getUsername()}&api-key=${this.getToken()}`;
-        //perform the GET request
-        request(url, { json: true }, (error, response, body) => {
-            this.requirements = [];
-            //if we got an error
-            if (!body || response.statusCode >= 400) {
-                this.failed.requirements = true;
-                this.error();
-                return;
-            }
-            //for each assigned requirement
-            body.forEach(element => {
-                //get the properties
-                let name = element.Name, id = element.RequirementId, projectId = element.ProjectId;
-                let projectName = element.ProjectName, description = element.Description, priorityName = element.ImportanceName;
-                let status = element.StatusName, type = element.RequirementTypeName;
+        //only request if we show requirements
+        if (this.showRequirements()) {
 
-                //actually create the new requirement
-                let newRequirement: Artifact = new Artifact(name, ArtifactType.Requirement, projectId, projectName, id, description, priorityName, status, type);
-                this.requirements.push(newRequirement);
+            //get the url the request will be sent to
+            let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}requirements?username=${this.getUsername()}&api-key=${this.getToken()}`;
+            //perform the GET request
+            request(url, { json: true }, (error, response, body) => {
+                this.requirements = [];
+                //if we got an error
+                if (!body || response.statusCode >= 400) {
+                    this.failed.requirements = true;
+                    this.error();
+                    return;
+                }
+                //for each assigned requirement
+                body.forEach(element => {
+                    //get the properties
+                    let name = element.Name, id = element.RequirementId, projectId = element.ProjectId;
+                    let projectName = element.ProjectName, description = element.Description, priorityName = element.ImportanceName;
+                    let status = element.StatusName, type = element.RequirementTypeName;
+
+                    //actually create the new requirement
+                    let newRequirement: Artifact = new Artifact(name, ArtifactType.Requirement, projectId, projectName, id, description, priorityName, status, type);
+                    this.requirements.push(newRequirement);
+                });
+                //set requirements as done
+                fulfilled.requirements = true;
+                //if all requests are done, move on
+                if (fulfilled.requirements && fulfilled.tasks && fulfilled.incidents) {
+                    this.populateHeaders();
+                    //update the onDidChangeTreeData event
+                    this.eventEmitter.fire();
+                }
             });
+        }
+        else {
+            this.requirements = [];
             //set requirements as done
             fulfilled.requirements = true;
             //if all requests are done, move on
@@ -203,40 +213,50 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
                 //update the onDidChangeTreeData event
                 this.eventEmitter.fire();
             }
-        });
+        }
     }
 
     /**
      * Populate all fo the incidents assigned to the user with data from the server
      */
     populateAssignedIncidents(fulfilled: any): void {
-        //stop if we don't check for incidents
-        if (!this.showIncidents()) {
-            this.incidents = [];
-            return;
-        }
-        //get the url the request will be sent to
-        let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}incidents?username=${this.getUsername()}&api-key=${this.getToken()}`;
-        //perform the GET request
-        request(url, { json: true }, (error, response, body) => {
-            this.incidents = [];
-            //if we got an error
-            if (!body || response.statusCode >= 400) {
-                this.failed.incidents = true;
-                this.error();
-                return;
-            }
-            //for each assigned incident...
-            body.forEach(element => {
-                //get the properties
-                let name = element.Name, id = element.IncidentId, projectId = element.ProjectId;
-                let projectName = element.ProjectName, description = element.Description, priorityName = element.PriorityName;
-                let status = element.IncidentStatusName, type = element.IncidentTypeName;
+        //only request if we show incidents
+        if (this.showIncidents()) {
 
-                //actually create the new incident
-                let newIncident: Artifact = new Artifact(name, ArtifactType.Incident, projectId, projectName, id, description, priorityName, status, type);
-                this.incidents.push(newIncident);
+            //get the url the request will be sent to
+            let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}incidents?username=${this.getUsername()}&api-key=${this.getToken()}`;
+            //perform the GET request
+            request(url, { json: true }, (error, response, body) => {
+                this.incidents = [];
+                //if we got an error
+                if (!body || response.statusCode >= 400) {
+                    this.failed.incidents = true;
+                    this.error();
+                    return;
+                }
+                //for each assigned incident...
+                body.forEach(element => {
+                    //get the properties
+                    let name = element.Name, id = element.IncidentId, projectId = element.ProjectId;
+                    let projectName = element.ProjectName, description = element.Description, priorityName = element.PriorityName;
+                    let status = element.IncidentStatusName, type = element.IncidentTypeName;
+
+                    //actually create the new incident
+                    let newIncident: Artifact = new Artifact(name, ArtifactType.Incident, projectId, projectName, id, description, priorityName, status, type);
+                    this.incidents.push(newIncident);
+                });
+                //set incidents as done
+                fulfilled.incidents = true;
+                //if all requests are done, move on
+                if (fulfilled.requirements && fulfilled.tasks && fulfilled.incidents) {
+                    this.populateHeaders();
+                    //update the onDidChangeTreeData event
+                    this.eventEmitter.fire();
+                }
             });
+        }
+        else {
+            this.incidents = [];
             //set incidents as done
             fulfilled.incidents = true;
             //if all requests are done, move on
@@ -245,40 +265,49 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
                 //update the onDidChangeTreeData event
                 this.eventEmitter.fire();
             }
-        });
+        }
     }
 
     /**
      * Populate all of the tasks assigned to the user with data from the server
      */
     populateAssignedTasks(fulfilled: any): void {
-        //stop if we don't check for tasks
-        if (!this.showTasks()) {
-            this.tasks = [];
-            return;
-        }
-        //get the url the request will be sent to
-        let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}tasks?username=${this.getUsername()}&api-key=${this.getToken()}`;
-        //perform the GET request
-        request(url, { json: true }, (error, response, body) => {
-            this.tasks = [];
-            //if we got an error
-            if (!body || response.statusCode >= 400) {
-                this.failed.tasks = true;
-                this.error();
-                return;
-            }
-            //for each assigned task
-            body.forEach(element => {
-                //get the properties
-                let name = element.Name, id = element.TaskId, projectId = element.ProjectId;
-                let projectName = element.ProjectName, description = element.Description, priorityName = element.TaskPriorityName;
-                let status = element.TaskStatusName, type = element.TaskTypeName;
+        //Only request if we show tasks
+        if (this.showTasks()) {
+            //get the url the request will be sent to
+            let url: string = `${this.getUrl()}${SpiraConstants.restServiceUrl}tasks?username=${this.getUsername()}&api-key=${this.getToken()}`;
+            //perform the GET request
+            request(url, { json: true }, (error, response, body) => {
+                this.tasks = [];
+                //if we got an error
+                if (!body || response.statusCode >= 400) {
+                    this.failed.tasks = true;
+                    this.error();
+                    return;
+                }
+                //for each assigned task
+                body.forEach(element => {
+                    //get the properties
+                    let name = element.Name, id = element.TaskId, projectId = element.ProjectId;
+                    let projectName = element.ProjectName, description = element.Description, priorityName = element.TaskPriorityName;
+                    let status = element.TaskStatusName, type = element.TaskTypeName;
 
-                //actually create the new task
-                let newTask: Artifact = new Artifact(name, ArtifactType.Task, projectId, projectName, id, description, priorityName, status, type);
-                this.tasks.push(newTask);
+                    //actually create the new task
+                    let newTask: Artifact = new Artifact(name, ArtifactType.Task, projectId, projectName, id, description, priorityName, status, type);
+                    this.tasks.push(newTask);
+                });
+                //set tasks as done
+                fulfilled.tasks = true;
+                //if all requests are done, move on
+                if (fulfilled.requirements && fulfilled.tasks && fulfilled.incidents) {
+                    this.populateHeaders();
+                    //update the onDidChangeTreeData event
+                    this.eventEmitter.fire();
+                }
             });
+        }
+        else {
+            this.tasks = [];
             //set tasks as done
             fulfilled.tasks = true;
             //if all requests are done, move on
@@ -287,7 +316,7 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
                 //update the onDidChangeTreeData event
                 this.eventEmitter.fire();
             }
-        });
+        }
     }
 
 

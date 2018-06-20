@@ -31,7 +31,7 @@ Here is a sample image of a (fake) RSS Token:
 ## Viewing your Assigned Requirements, Tasks, and Incidents
 You should see a new icon on the left menu where the explorer, search bar, version control, etc are expanded from. Alternatively, you can expand the view by pressing `alt+s` Here is an image of the Spira icon:
 
-![Spira Panel Icon](NEEDS!!!)
+![Spira Panel Icon](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Panel%20Icon.PNG)
 
 Click on the new icon to open the Spira panel where you can see all of the Tasks, Requirements, and Incidents that are assigned to you. You can expand/collapse any of the different types of items. You should now see a view similar to this:
 
@@ -63,3 +63,7 @@ Hit return and select a project from the dropdown as shown below:
 ![Project Selection](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Project%20Select.PNG)
 
 Hit return and you should see it in the Spira panel on the left and get a popup in the bottom right telling you it was a success!
+
+## Prevent Displaying an Item Type
+If you like, you can prevent displaying a particular item type. This can be particularly useful if you only want to view your assigned tasks, which should also decrease load times. To accomplish this, simply search 'spira' in settings and switch any of the 'showType' settings to false. See the image below for an example:
+![Disable Artifacts](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Disable%20Artifact%20Type.PNG)
