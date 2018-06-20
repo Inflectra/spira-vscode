@@ -22,13 +22,13 @@ export class Artifact extends TreeItem {
         this.command = new SpiraInfoCommand(this);
         if (type !== "header") {
             if (artifactType === ArtifactType.Requirement) {
-                this.iconPath = Uri.parse("https://www.inflectra.com/Images/icons/icon-spiratest.svg");
+                this.iconPath = Uri.parse("https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/spira-requirement.png");
             }
             else if (artifactType === ArtifactType.Incident) {
-                this.iconPath = Uri.parse("https://www.inflectra.com/Images/icons/icon-spirateam.svg");
+                this.iconPath = Uri.parse("https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/spira-incident.png");
             }
             else {
-                this.iconPath = Uri.parse("https://www.inflectra.com/Images/icons/icon-spiraplan.svg");
+                this.iconPath = Uri.parse("https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/spira-task.png");
             }
         }
     }
