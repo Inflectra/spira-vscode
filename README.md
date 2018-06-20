@@ -66,4 +66,5 @@ Hit return and you should see it in the Spira panel on the left and get a popup 
 
 ## Prevent Displaying an Item Type
 If you like, you can prevent displaying a particular item type. This can be particularly useful if you only want to view your assigned tasks, which should also decrease load times. To accomplish this, simply search 'spira' in settings and switch any of the 'showType' settings to false. See the image below for an example:
+
 ![Disable Artifacts](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Disable%20Artifact%20Type.PNG)
