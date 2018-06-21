@@ -28,7 +28,7 @@ export class Artifact extends TreeItem {
             else if (artifactType === ArtifactType.Incident) {
                 this.iconPath = Uri.parse("https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/spira-incident.png");
             }
-            else {
+            else if (artifactType === ArtifactType.Task) {
                 this.iconPath = Uri.parse("https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/spira-task.png");
             }
         }

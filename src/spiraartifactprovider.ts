@@ -47,6 +47,9 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
     firstTime: boolean = true;
 
     constructor(public context: vscode.ExtensionContext, public runTimer: { run: boolean }) {
+        if (this.firstTime) {
+            this.headers.push(new Artifact(`Retrieving data from Spira...`, undefined, 0, "", 0, "", "", "", "", 0));
+        }
         this.populateArtifacts();
         this.populateProjects().then(e => {
             this.projects = e;
@@ -337,6 +340,10 @@ export class SpiraArtifactProvider implements vscode.TreeDataProvider<Artifact> 
         }
         if (this.showIncidents()) {
             this.headers.push(new Artifact(`INCIDENTS (${this.incidents.length})`, ArtifactType.Incident, 0, "", 0, "", "", "", "header", this.incidents.length === 0 ? 0 : 1));
+        }
+        //if everything is disabled
+        else if (!this.showTasks() && !this.showRequirements()) {
+            this.headers.push(new Artifact(`You have elected to not show anything! Check your settings for spira.settings.show(Type)`, undefined, 0, "", 0, "", "", "", "header", 0));
         }
 
         if (this.firstTime) {

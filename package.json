@@ -1,8 +1,8 @@
 {
     "name": "spira-extension-vscode",
-    "displayName": "Spira Extension for VS Code",
-    "description": "Allows users to see their assigned artifacts within VS Code and quick create new tasks",
-    "version": "1.0",
+    "displayName": "SpiraPlan Extension",
+    "description": "See your requirements, tasks, bugs, and incidents in SpiraTest/SpiraTeam/SpiraPlan",
+    "version": "1.0.1",
     "publisher": "Inflectra",
     "icon": "media/spiraplan-icon-128x128.png",
     "engines": {
@@ -30,9 +30,9 @@
                 "mac": "ctrl+s ctrl+r"
             },
             {
-                "command": "workbench.view.extension.spira-viewer",
-                "key": "alt+s",
-                "mac": "ctrl+s"
+                "command": "workbench.view.extension.spira-extension",
+                "key": "alt+s alt+s",
+                "mac": "ctrl+s ctrl+s"
             },
             {
                 "command": "spira.newTask",
