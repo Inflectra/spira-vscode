@@ -11,8 +11,6 @@ ___
 `artifact.ts` contains the 'model' objects such as Artifact and Project which are used throughout the plugin
 ### `spiraartifactprovider.ts`
 `spiraartifactprovider.ts` is where data is retrieved from Spira, and displayed in the panel on the left.
-### `htmlprovider.ts`
-`htmlprovider.ts` is used when an artifact is clicked to show information. It creates the tab on the right hand side which shows information about the artifact
 ___
 ## Creating Tasks
 ### `newtaskcommand.ts`

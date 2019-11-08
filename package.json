@@ -2,7 +2,7 @@
     "name": "spira-extension-vscode",
     "displayName": "SpiraPlan Extension",
     "description": "See your requirements, tasks, bugs, and incidents in SpiraTest/SpiraTeam/SpiraPlan",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "publisher": "Inflectra",
     "icon": "media/spiraplan-icon-128x128.png",
     "engines": {

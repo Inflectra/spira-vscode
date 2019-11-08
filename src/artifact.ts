@@ -1,4 +1,5 @@
 import { TreeItem, Command, Uri } from 'vscode';
+import { SpiraConstants } from './constants';
 
 /**
  * An Artifact in Spira
@@ -41,19 +42,7 @@ export class Artifact extends TreeItem {
         }
         //if artifact is anything else
         else {
-            return `${this.projectName} | ${this.getShorthandArtifact(this.artifactType)}:${this.artifactId}`;
-        }
-    }
-
-    /**
-     * Returns the shorthand of the artifact type, ex: IN for incident, TK for task, RQ for requirement
-     * @param type Type of artifact
-     */
-    getShorthandArtifact(type: ArtifactType): string {
-        switch (type) {
-            case ArtifactType.Requirement: return "RQ";
-            case ArtifactType.Incident: return "IN";
-            case ArtifactType.Task: return "TK";
+            return `${SpiraConstants.getArtifactToken(this.artifactType)}:${this.artifactId} | ${this.projectName}`;
         }
     }
 }
@@ -63,7 +52,6 @@ export class Artifact extends TreeItem {
  */
 export class Project {
     constructor(public name: string, public id: number) {
-
     }
 
     getProjectName(): string {
@@ -89,4 +77,10 @@ export enum ArtifactType {
     Requirement = "Requirement",
     Incident = "Incident",
     Task = "Task"
+}
+
+export enum ArtifactToken {
+    Requirement = "RQ",
+    Incident = "IN",
+    Task = "TK"
 }
