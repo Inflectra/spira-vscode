@@ -15,3 +15,8 @@ ___
 ## Creating Tasks
 ### `newtaskcommand.ts`
 Called when the user calls for the creation of a new task, it facilitates the prompts for the name and project of the task. It also posts the new task to Spira. 
+
+## How to Package and Publish
+- follow the steps here: https://code.visualstudio.com/api/working-with-extensions/publishing-extension
+
+Do not bother with any of the scripts in the package.json - these are there to be used by the tool referenced in the above link
