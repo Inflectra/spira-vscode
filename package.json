@@ -1,124 +1,69 @@
 {
-    "name": "spira-extension-vscode",
-    "displayName": "SpiraPlan Extension",
-    "description": "See your requirements, tasks, bugs, and incidents in SpiraTest/SpiraTeam/SpiraPlan",
-    "version": "1.1.0",
-    "publisher": "Inflectra",
-    "icon": "media/spiraplan-icon-128x128.png",
-    "engines": {
-        "vscode": "^1.23.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Inflectra/spira-vscode.git"
-    },
-    "categories": [
-        "Other"
+  "name": "tempextdemo",
+  "displayName": "tempextdemo",
+  "description": "Testing for a new version of Spira VSCode Extension",
+  "icon": "media/test_icon.png",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.81.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "tempextdemo.addTask",
+        "title": "Add Task"
+      },
+      {
+        "command": "tempextdemo.verifyCred",
+        "title": "Verify Credentials"
+      }
     ],
-    "activationEvents": [
-        "onCommand:spira.refresh",
-        "onCommand:spira.setupCredentials",
-        "onView:spiraExtension",
-        "onCommand:spira.newTask"
-    ],
-    "main": "./out/extension",
-    "contributes": {
-        "keybindings": [
-            {
-                "command": "spira.refresh",
-                "key": "alt+s alt+r",
-                "mac": "ctrl+s ctrl+r"
-            },
-            {
-                "command": "workbench.view.extension.spira-extension",
-                "key": "alt+s alt+s",
-                "mac": "ctrl+s ctrl+s"
-            },
-            {
-                "command": "spira.newTask",
-                "key": "alt+s alt+t",
-                "mac": "ctrl+s ctrl+t"
-            }
-        ],
-        "commands": [
-            {
-                "command": "spira.refresh",
-                "title": "Spira - Refresh"
-            },
-            {
-                "command": "spira.setupCredentials",
-                "title": "Spira - Setup Credentials"
-            },
-            {
-                "command": "spira.newTask",
-                "title": "Spira - Create New Task"
-            }
-        ],
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "spira-extension",
-                    "title": "SpiraPlan",
-                    "icon": "media/spiraplan-monochrome.svg"
-                }
-            ]
-        },
-        "views": {
-            "spira-extension": [
-                {
-                    "id": "spiraExtension",
-                    "name": "My Assigned"
-                }
-            ]
-        },
-        "configuration": {
-            "title": "Spira configuration",
-            "properties": {
-                "spira.settings.refreshTime": {
-                    "type": "integer",
-                    "default": 60,
-                    "description": "Number of seconds between refreshing data from the server. Any value below 1 will never automatically refresh. Refreshing manually will restart timing"
-                },
-                "spira.settings.showIncidents": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Show assigned incidents in the UI"
-                },
-                "spira.settings.showRequirements": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Show assigned requirements in the UI"
-                },
-                "spira.settings.showTasks": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Show assigned tasks in the UI"
-                }
-            }
-        },
-        "menus": {
-            "editor/context": [
-                {
-                    "command": "spira.newTask"
-                }
-            ]
-        }
+    "viewsContainers": {
+      "activitybar": [
+          {
+              "id": "testing-extension",
+              "title": "Testing",
+              "icon": "media/test_icon.png"
+          }
+      ]
     },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
-    },
-    "devDependencies": {
-        "@types/mocha": "^10.0.1",
-        "@types/node": "^18.16.2",
-        "tslint": "^5.20.1",
-        "typescript": "^5.0.4",
-        "vscode": "^1.1.37"
-    },
-    "dependencies": {
-        "request": "^2.88.0"
-    }
+    "views": {
+      "testing-extension": [
+          {
+              "id": "testing-extension",
+              "name": "My Assigned"
+          }
+      ]
+  }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "20.2.5",
+    "@types/superagent": "^4.1.18",
+    "@types/vscode": "^1.81.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "@vscode/test-electron": "^2.3.2",
+    "eslint": "^8.41.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "superagent": "^8.0.9"
+  }
 }

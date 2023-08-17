@@ -1,83 +1,71 @@
-# Spira Extension for VS Code
+# tempextdemo README
 
-## Brief Overview
-This plugin creates a new custom view which allows you to seamlessly view your assigned Spira Tasks, Requirements, and Incidents as well as create brand new Tasks right from Visual Studio Code.
+This is the README for your extension "tempextdemo". After writing up a brief description, we recommend including the following sections.
 
-### Don't have Spira?
-If you do not have a Spira subscription, fear not! You can get a 30 day free trial for our flagship ALM product [SpiraPlan](http://www.inflectra.com/SpiraPlan/) with no credit card needed!
+## Features
 
-### Guide Basics
-Unfortunately, this plugin only works with version 5.3 and above of the Spira ALM suite. If you have an older version, you need to update to use this plugin.
+Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
 
-This guide assumes you are familiar with Visual Studio Code and have already installed our plugin from the store. 
+For example if there is an image subfolder under your extension project workspace:
 
-## Contributing
-If you want to contribute, take a look at `DEVNOTEs.md` in the root directory for information on how the plugin is structured. 
+\!\[feature X\]\(images/feature-x.png\)
 
-## Logging in
-Open the command palette and type in 'credentials' as shown: 
+> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
 
-![Command Palette Credentials](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Accessing%20Credentials.PNG)
+## Requirements
 
-Hit return to begin the Spira authentication process. You should see an input box that asks you to type the base URL of your Spira service. This should access the 'root' directory of your Spira, not including the ending slash. An example is provided below:
+If you have any requirements or dependencies, add a section describing those and how to install and configure them.
 
-![Spira URL](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Url.PNG)
+## Extension Settings
 
-Hit return when you typed in your URL to move on to the next step. You will be prompted to enter your Spira username, which you use when signing into your Spira subscription. See the example below for assistance.
+Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
 
-![Spira Username](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Username.PNG)
+For example:
 
-After you entered your username, hit return to move onto your final step. You will be prompted to enter your RSS Token, which must be enabled in your user profile to work. 
+This extension contributes the following settings:
 
-Here is the location of the RSS Token in your profile:
+* `myExtension.enable`: Enable/disable this extension.
+* `myExtension.thing`: Set to `blah` to do something.
 
-![Spira Profile](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Spira%20Profile.PNG)
+## Known Issues
 
-Here is a sample image of a (fake) RSS Token:
+Calling out known issues can help limit users opening duplicate issues against your extension.
 
-![Spira Token](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/RSS%20Token.PNG)
+## Release Notes
 
-## Viewing your Assigned Requirements, Tasks, and Incidents
-You should see a new icon on the left menu where the explorer, search bar, version control, etc are expanded from. Alternatively, you can expand the view by pressing `alt+s` Here is an image of the Spira icon:
+Users appreciate release notes as you update your extension.
 
-![Spira Panel Icon](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Panel%20Icon.PNG)
+### 1.0.0
 
-Click on the new icon to open the Spira panel where you can see all of the Tasks, Requirements, and Incidents that are assigned to you. You can expand/collapse any of the different types of items. You should now see a view similar to this:
+Initial release of ...
 
-![Spira Panel](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Panel.PNG)
+### 1.0.1
 
-Clicking on one of the different items, 'Cannot log into the application' for instance will bring up a view similar to this:
+Fixed issue #.
 
-![Spira Information](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Artifact%20Information.PNG)
+### 1.1.0
 
-Clicking on the name of the artifact highlighted in blue will conveniently open the selected item in your default browser. 
+Added features X, Y, and Z.
 
-## Refreshing your Assigned Items from Spira
-### Refreshing Automatically
-By default, your assigned items are refreshed every 60 seconds. If you would like to change this, see [Changing Auto-Refresh Time](#changing-auto-refresh-time)
+---
 
-Changing the setting will affect how often the server is pinged to refresh the list. If you put in 0 or below, the list will never automatically refresh, and a value between 1 and 5 will default to 5 seconds. If you changed the setting from 0 or below to above 0, please refresh manually as shown below:
-### Refreshing Manually
-Running 'Spira - Refresh' in the command palette or hitting `alt+s, alt+r` by default on windows will refresh manually.
+## Following extension guidelines
 
-## Creating a new Task
-You can easily create a new task in VS Code by running 'Spira - Create New Task' in the command palette or by hitting `alt+s, alt+t` on windows. This will take any highlighted text and dump it into the name prompt. Feel free to change the name if you like.
+Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
 
-![Task Name](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Task%20Name.PNG)
+* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
 
-Hit return and select a project from the dropdown as shown below:
+## Working with Markdown
 
-![Project Selection](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Project%20Select.PNG)
+You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
 
-Hit return and you should see it in the Spira panel on the left and get a popup in the bottom right telling you it was a success!
+* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
+* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
+* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
 
-## Settings
-### Changing Auto-Refresh Time
-By default, the panel will refresh every 60 seconds, but this can easily be changed or disabled altogether through settings. To change this, open up your settings and search for 'spira' as shown below:
+## For more information
 
-![Spira Refresh Setting](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Refresh%20Setting.PNG)
+* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
+* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
-### Disabling an Item Type
-If you like, you can prevent displaying a particular item type. This can be particularly useful if you only want to view your assigned tasks, which should also decrease load times. To accomplish this, simply search 'spira' in settings and switch any of the 'showType' settings to false. See the image below for an example:
-
-![Disable Artifacts](https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/Disable%20Artifact%20Type.PNG)
+**Enjoy!**

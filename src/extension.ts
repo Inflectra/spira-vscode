@@ -1,137 +1,123 @@
-'use strict';
+// The module 'vscode' contains the VS Code extensibility API
 import * as vscode from 'vscode';
-import { SpiraArtifactProvider } from './spiraartifactprovider';
-import { Artifact, ArtifactToken, ArtifactType } from './artifact';
-import { SpiraConstants } from './constants';
-import { SetupCredentialsCommand } from './setupcredentialscommand';
-import { NewTaskCommand } from './newtaskcommand';
 
-/**
- * Timer used to refresh the settings
- */
-var timer: NodeJS.Timer;
+// The module 'superagent' is used to make API calls to Spira Rest Web Service
+import * as superagent from "superagent";
 
-/**
- * Becomes false when an error occurs
- */
-var runTimer: { run: boolean } = {
-    run: true
-};
+// This method is called when extension is activated
+// Your extension is activated the very first time the command is executed
+export async function activate(context: vscode.ExtensionContext) {
 
-//called when extension is activated. See package.json for activation events
-export function activate(context: vscode.ExtensionContext) {
-    const spiraProvider = new SpiraArtifactProvider(context, runTimer);
-    const setupCredentialsCommand = new SetupCredentialsCommand(context);
-    const uri: vscode.Uri = vscode.Uri.parse(SpiraConstants.URI);
-    const newTaskCommand = new NewTaskCommand(context, spiraProvider);
-    const scheme = 'spira';
+	//variable to store if the user has been verified
+	var verified = false;
 
-    let chosenArtifact: Artifact;
+	//url, username, and API token are used to verify the user
+	var url:string | undefined;
+	var username:string | undefined;
+	var token:string | undefined;
 
-    let refresh = vscode.commands.registerCommand('spira.refresh', (automatic: boolean) => {
-        runTimer.run = true;
-        if (!timer) {
-            refreshCallback();
-        }
-        //refresh the Spira window
-        spiraProvider.refresh(!automatic);
-    });
+	//object holding the projects the user is permitted to see
+	interface Projects {
+		[key: string]: number;
+	 };
+	var projectList:Projects = {};
+	
+	//array holding project names
+	var projectNames: string[] = [];
 
+	//variable to hold the project user chooses when adding projects (may be deleted and moved to local scope)
+	var chosenProject:string;
 
-    const contentProvider = new class implements vscode.TextDocumentContentProvider {
-        // emitter and its event
-        onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
-        onDidChange = this.onDidChangeEmitter.event;
+	//command to verify the user credentials: Verify Credentials)
+	let verifyCred = vscode.commands.registerCommand('tempextdemo.verifyCred', async () => {
 
-        provideTextDocumentContent(uri: vscode.Uri): string {
-            // find the correct artifact
-            // first split the uri we got into token and id
-            const artifactToken = uri.path.split(":")[0];
-            const artifactId = uri.path.split(":")[1];
-            // now get the right array of items
-            var artifactList;
-            switch (artifactToken) {
-                case ArtifactToken.Incident:
-                    artifactList = spiraProvider.incidents;
-                    break;
-                case ArtifactToken.Requirement:
-                    artifactList = spiraProvider.requirements;
-                    break;
-                case ArtifactToken.Task:
-                    artifactList = spiraProvider.tasks;
-                    break;
-            }
-            // find an item match
-            const artifact = artifactList.filter(x => x.artifactId == artifactId)[0];
+		//prompting the user to enter their url
+		url = await vscode.window.showInputBox({
+            ignoreFocusOut: true,
+            placeHolder: "http://doctor/SpiraPlan",
+            prompt: "Base URL for accessing Spira Please omit the last slash as shown above ex. https://example.com/example/Spira",
+        });
 
-            // spit out a plain text string with a url at the top that can be clicked on
-            const artifactString = `URL:       ${SpiraConstants.getArtifactUrl(artifact, context)}\n
-ID:        [${SpiraConstants.getArtifactToken(artifact.artifactType)}:${artifact.artifactId}]
-Name:      ${artifact.name}
-${artifact.projectName ? "Product:   " + artifact.projectName + "\n" : ""}${artifact.type ? "Type:      " + artifact.type + "\n" : ""}${artifact.status ? "Status:    " + artifact.status + "\n" : ""}${artifact.priority ? "Priority:  " + artifact.priority + "\n" : ""}
-${artifact.description ? "Description\n===========\n" + artifact.description.replace(/<[^>]*>/g, '') : ""}`;
+		//prompting the user to enter their username
+        username = await vscode.window.showInputBox({
+            ignoreFocusOut: true,
+            placeHolder: "fredbloggs",
+            prompt: "Please enter your Spira username",
+        });
 
-            return artifactString;
-        }
-    }
-    context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider(scheme, contentProvider));
+		//prompting the user to enter their API token
+        token = await vscode.window.showInputBox({
+            ignoreFocusOut: true,
+            placeHolder: "{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}",
+            prompt: "Marked 'RSS Token' in your profile, RSS Feeds must be enabled for this to work",
+        });
 
-    // register a command that opens an artifact document
-    context.subscriptions.push(vscode.commands.registerCommand('spira.info', async (artifact: Artifact) => {
-        let artifactToken = `${ArtifactToken[artifact.artifactType]}:${artifact.artifactId}`
-        let uri = vscode.Uri.parse('spira:' + artifactToken);
-        uri.toJSON
-        let doc = await vscode.workspace.openTextDocument(uri); // calls back into the provider
-        await vscode.window.showTextDocument(doc, { preview: false });
-    }));
+		//testing whether the user can be authenticated
+		try{
+			await superagent.get(`${url}/Services/v7_0/RestService.svc/projects?username=${username}&api-key=${token}`)
+			vscode.window.showInformationMessage('Credentials Are Verified')
+			verified = true;
+		}
+		catch{
+			vscode.window.showErrorMessage('Credentials Cannot Be Verified, Please Try Again')
+		}
+	});
 
 
-    context.subscriptions.push(vscode.commands.registerCommand('spira.setupCredentials', () => {
-        setupCredentialsCommand.run();
-    }));
+	//Command to let user add Tasks to their Spira account: (Add Task)
+	let addTask = vscode.commands.registerCommand('tempextdemo.addTask', async () => {
 
+		//only works if the user is verified first
+		if (verified){
 
-    context.subscriptions.push(vscode.commands.registerCommand('spira.newTask', () => {
-        //get the selected text
-        let editor = vscode.window.activeTextEditor;
-        let text = '';
-        if (editor) {
-            let selection: vscode.Selection = editor.selection;
-            text = editor.document.getText(selection);
-        }
-        //run with the selected text
-        newTaskCommand.run(text);
-    }));
+			//prompting the user to enter task name to be created
+			let taskName = await vscode.window.showInputBox({
+				ignoreFocusOut: true,
+				placeHolder: "Develop New System",
+				prompt:'Enter Your Task Name:'
+			});
 
-    vscode.window.registerTreeDataProvider('spiraExtension', spiraProvider);
-    //begin automatically refreshing
-    setTimeout(refreshCallback, 5000);
+			//getting project list to show in dropdown
+			await retrieveProjects(url,username,token);
+
+			//prompting the user to choose which project to add task in
+			chosenProject = await vscode.window.showQuickPick(projectNames, {
+				ignoreFocusOut: true,
+				placeHolder: "Select a project to create the task in"
+			}) ?? "" //circumvents the type error warning
+
+			//posts the task onto Spira
+			try{
+				await superagent.post(`${url}/Services/v7_0/RestService.svc/projects/${projectList[chosenProject]}/tasks?username=${username}&api-key=${token}`)
+				.send({TaskId :null, TaskStatusId: 1, TaskTypeId: 1, Name: taskName}); //TaskId, TaskStatusId, and TaskTypeId are all defaults
+				vscode.window.showInformationMessage('Task Added Successfully');
+			}
+
+			catch(error){
+				vscode.window.showErrorMessage('An Error Occurred');
+			}
+		}
+
+		else{
+			vscode.window.showErrorMessage('Please Verify Your Credentials First');
+		}
+	});
+
+	//adding commands so they are unloaded when extension is deactivated
+	context.subscriptions.push(verifyCred);
+	context.subscriptions.push(addTask);
+
+	//helper function to retrieve lists of projects the user can see
+	async function retrieveProjects(url:string | undefined,username:string | undefined,token:string | undefined){
+		let tempProjects = await superagent.get(`${url}/services/v7_0/RestService.svc/projects?username=${username}&api-key=${token}`)
+		.set('Content-Type','application/json').set('accept','application/json');
+		for(let i = 0; i<tempProjects.body.length; i++){
+			//adding fields to key value pairs and array (for dropdown menu when adding tasks)
+			projectList[tempProjects.body[i].Name] = tempProjects.body[i].ProjectId;
+			projectNames.push(tempProjects.body[i].Name);
+		}
+	}
 }
 
-function refreshCallback(): void {
-    clearTimeout(timer);
-    if (!runTimer.run) {
-        return;
-    }
-    let time = getRefreshTime();
-    //only refresh if user input a value above 0
-    if (time > 0) {
-        //minimum of 5 seconds to refresh
-        if (time < 5000) {
-            time = 5000;
-        }
-        timer = setTimeout(refreshCallback, time);
-    }
-    vscode.commands.executeCommand('spira.refresh', true);
-}
-
-/**
- * Gets the time in miliseconds to refresh artifacts from Spira
- */
-function getRefreshTime(): number {
-    return vscode.workspace.getConfiguration().get<number>("spira.settings.refreshTime") * 1000;
-}
-
-// this method is called when your extension is deactivated
-export function deactivate() {
-}
+// This method is called when extension is deactivated
+export function deactivate() {}
