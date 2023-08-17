@@ -1,6 +1,6 @@
 {
-  "name": "tempextdemo",
-  "displayName": "tempextdemo",
+  "name": "fork-spira-vscode",
+  "displayName": "fork-spira-vscode",
   "description": "Testing for a new version of Spira VSCode Extension",
   "icon": "media/test_icon.png",
   "version": "0.0.1",
@@ -11,15 +11,15 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./out/extension.js",
+  "main": "src/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "tempextdemo.addTask",
+        "command": "fork-spira-vscode.addTask",
         "title": "Add Task"
       },
       {
-        "command": "tempextdemo.verifyCred",
+        "command": "fork-spira-vscode.verifyCred",
         "title": "Verify Credentials"
       }
     ],
