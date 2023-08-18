@@ -1,0 +1,8 @@
+GET https://demo-us.spiraservice.net/andy-liang/services/v7_0/RestService.svc/projects?username=administrator&api-key={01F8245C-9043-4977-BB7F-FEFF8F64A1F4}
+Content-Type: application/json
+accept: application/application/json
+
+###
+GET https://demo-us.spiraservice.net/andy-liang/Services/v7_0/RestService.svc/projects/1/tasks/1083?username=administrator&api-key={01F8245C-9043-4977-BB7F-FEFF8F64A1F4}
+Content-Type: application/json
+accept: application/application/json

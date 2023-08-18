@@ -30,6 +30,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	//array holding project names
 	var projectNames: string[] = [];
 
+	//variable to hold the project user chooses when adding projects (may be deleted and moved to local scope)
+	var chosenProject:string;
+
 	//command to verify the user credentials: Verify Credentials)
 	let verifyCred = vscode.commands.registerCommand('tempextdemo.verifyCred', async () => {
 
@@ -54,8 +57,6 @@ export async function activate(context: vscode.ExtensionContext) {
             prompt: "Marked 'RSS Token' in your profile, RSS Feeds must be enabled for this to work",
         });
 
-		retrieveInfo('Incidents');
-
 		//testing whether the user can be authenticated
 		try{
 			await superagent.get(`${url}/Services/v7_0/RestService.svc/projects?username=${username}&api-key=${token}`)
@@ -63,8 +64,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			verified = true;
 		}
 		catch{
-			vscode.window.showInformationMessage('Please Show Up')
-			//vscode.window.showErrorMessage('Credentials Cannot Be Verified, Please Try Again')
+			vscode.window.showErrorMessage('Credentials Cannot Be Verified, Please Try Again')
 		}
 	});
 
@@ -83,10 +83,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			});
 
 			//getting project list to show in dropdown
-			await retrieveProjects();
+			await retrieveProjects(url,username,token);
 
 			//prompting the user to choose which project to add task in
-			let chosenProject = await vscode.window.showQuickPick(projectNames, {
+			chosenProject = await vscode.window.showQuickPick(projectNames, {
 				ignoreFocusOut: true,
 				placeHolder: "Select a project to create the task in"
 			}) ?? "" //circumvents the type error warning
@@ -113,10 +113,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(addTask);
 
 	//helper function to retrieve lists of projects the user can see
-	async function retrieveProjects(){
+	async function retrieveProjects(url:string | undefined,username:string | undefined,token:string | undefined){
 		let tempProjects = await superagent.get(`${url}/services/v7_0/RestService.svc/projects?username=${username}&api-key=${token}`)
 		.set('Content-Type','application/json').set('accept','application/json');
-		for(let i = 0; i<tempProjects.body.length; i++){ //loops through all projects
+		for(let i = 0; i<tempProjects.body.length; i++){
 			//adding fields to key value pairs and array (for dropdown menu when adding tasks)
 			projectList[tempProjects.body[i].Name] = tempProjects.body[i].ProjectId;
 			projectNames.push(tempProjects.body[i].Name);
