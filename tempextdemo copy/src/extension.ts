@@ -4,12 +4,8 @@ import * as vscode from 'vscode';
 // The module 'superagent' is used to make API calls to Spira Rest Web Service
 import * as superagent from "superagent";
 
-import {Uri} from 'vscode';
-
 // This method is called when extension is activated
 // Your extension is activated the very first time the command is executed
-
-
 export async function activate(context: vscode.ExtensionContext) {
 
 	//variable to store if the user has been verified
@@ -30,9 +26,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	interface Info{
 		[key:string]: number | string;
 	};
-	var incidents: Info[] = [];
-	var tasks: Info[] = [];
-	var requirements: Info[] = [];
 	
 	//array holding project names
 	var projectNames: string[] = [];
@@ -69,10 +62,6 @@ export async function activate(context: vscode.ExtensionContext) {
 			await superagent.get(`${url}/Services/v7_0/RestService.svc/projects?username=${username}&api-key=${token}`)
 			vscode.window.showInformationMessage('Credentials Are Verified')
 			verified = true;
-			tasks = await retrieveInfo('Task');
-			incidents = await retrieveInfo('Incident');
-			requirements = await retrieveInfo('Requirement');
-			vscode.window.registerTreeDataProvider('testing-extension', new TreeDataProvider(requirements,tasks,incidents));
 		}
 		catch{
 			vscode.window.showErrorMessage('Credentials Cannot Be Verified, Please Try Again')
@@ -119,21 +108,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	let reloadInfo = vscode.commands.registerCommand('tempextdemo.reloadInfo', async () =>{
-		if(verified){
-			retrieveProjects(url,username,token);
-			tasks = await retrieveInfo('Task');
-			incidents = await retrieveInfo('Incident');
-			requirements = await retrieveInfo('Requirement');
-			vscode.window.registerTreeDataProvider('testing-extension', new TreeDataProvider(requirements,tasks,incidents));
-			vscode.window.showInformationMessage('Refreshed');
-		}
-	});
-
 	//adding commands so they are unloaded when extension is deactivated
 	context.subscriptions.push(verifyCred);
 	context.subscriptions.push(addTask);
-	context.subscriptions.push(reloadInfo);
 
 	//helper function to retrieve lists of projects the user can see
 	async function retrieveProjects(url:string | undefined,username:string | undefined,token:string | undefined){
@@ -147,7 +124,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 
 	//helper function to retrieve information (tasks, incidents, & requirements) to be displayed
-	// async function retrieveInfo(infoType:string|undefined, infoList:Info[]){
 	async function retrieveInfo(infoType:string|undefined){
 		//infoType should either be 'Task', 'Incident', or 'Requirement'
 		let tempList: Info[] = [];
@@ -165,82 +141,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 			tempList.push(tempInfo);
 		}
-		return tempList;
+		console.log(tempList);
 	}
 }
 
 // This method is called when extension is deactivated
 export function deactivate() {}
-
-
-class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
-
-	onDidChangeTreeData?: vscode.Event<TreeItem|null|undefined>|undefined;
-  
-	tk: TreeItem;
-	in: TreeItem;
-	rq: TreeItem;
-	header:TreeItem[] = [];
-  
-	constructor(requirements:any,tasks:any,incidents:any) {
-
-	  let rqList:TreeItem[] = []
-	  for(let i = 0; i<requirements.length;i++){
-		let temprq = new TreeItem(`${requirements[i]['Name']} - [RQ:${requirements[i]['ID']}]`)
-		temprq.iconPath = Uri.parse("https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/spira-requirement.png");
-		rqList.push(temprq);
-	  }
-	  this.rq = new TreeItem(`REQUIREMENTS (${requirements.length})`, rqList);
-
-	  let tkList:TreeItem[] = []
-	  for(let i = 0; i<tasks.length;i++){
-		let temptk = new TreeItem(`${tasks[i]['Name']} - [TK:${tasks[i]['ID']}]`)
-		temptk.iconPath = Uri.parse("https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/spira-task.png");
-		tkList.push(temptk);
-	  }
-	  this.tk = new TreeItem(`TASKS (${tasks.length})`, tkList);
-
-	  let inList:TreeItem[] = []
-	  for(let i = 0; i<incidents.length;i++){
-		let tempin = new TreeItem(`${incidents[i]['Name']} - [IN:${incidents[i]['ID']}]`)
-		tempin.iconPath = Uri.parse("https://raw.githubusercontent.com/Inflectra/spira-vscode/master/media/spira-incident.png");;
-		inList.push(tempin);
-	  }
-	  this.in = new TreeItem(`INCIDENTS (${incidents.length})`,inList);
-	  this.header.push(this.tk);
-	  this.header.push(this.in);
-	  this.header.push(this.rq);
-
-	}
-  
-	getTreeItem(element: TreeItem): vscode.TreeItem|Thenable<vscode.TreeItem> {
-	  return element;
-	}
-  
-	getChildren(element?: TreeItem|undefined): vscode.ProviderResult<TreeItem[]> {
-	  if (element === undefined) {
-		return this.header;
-	  }
-	  return element.children;
-	}
-  }
-  
-  class TreeItem extends vscode.TreeItem {
-	children: TreeItem[]|undefined;
-  
-	constructor(label: string, children?: TreeItem[]) {
-	  super(
-		  label,
-		  children === undefined ? vscode.TreeItemCollapsibleState.None :
-								   vscode.TreeItemCollapsibleState.Collapsed);
-	  this.children = children;
-	}
-
-	public setLabel(label:string){
-		this.label = label;
-	}
-
-	public setChildren(children: TreeItem[]){
-		this.children = children;
-	}
-  }

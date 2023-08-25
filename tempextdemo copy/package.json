@@ -16,22 +16,18 @@
     "commands": [
       {
         "command": "tempextdemo.addTask",
-        "title": "Demo - Create New Task"
+        "title": "Add Task"
       },
       {
         "command": "tempextdemo.verifyCred",
-        "title": "Demo - Setup Credentials"
-      },
-      {
-        "command": "tempextdemo.reloadInfo",
-        "title": "Demo - Refresh"
+        "title": "Verify Credentials"
       }
     ],
     "viewsContainers": {
       "activitybar": [
           {
               "id": "testing-extension",
-              "title": "Demo",
+              "title": "Testing",
               "icon": "media/test_icon.png"
           }
       ]
