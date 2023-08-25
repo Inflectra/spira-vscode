@@ -11,23 +11,27 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "src/extension.js",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "tempextdemo.addTask",
-        "title": "Add Task"
+        "title": "Demo - Create New Task"
       },
       {
         "command": "tempextdemo.verifyCred",
-        "title": "Verify Credentials"
+        "title": "Demo - Setup Credentials"
+      },
+      {
+        "command": "tempextdemo.reloadInfo",
+        "title": "Demo - Refresh"
       }
     ],
     "viewsContainers": {
       "activitybar": [
           {
               "id": "testing-extension",
-              "title": "Testing",
+              "title": "Demo",
               "icon": "media/test_icon.png"
           }
       ]
